@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # **************************************************************************
 # *
-# * Authors:     you (you@yourinstitution.email)
+# * Authors:     Daniel Del Hoyo Gomez (daniel.delhoyo.gomez@alumnos.upm.es)
 # *
 # * your institution
 # *
@@ -25,6 +25,4 @@
 # *
 # **************************************************************************
 
-"""
 
-"""

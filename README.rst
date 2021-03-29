@@ -1,95 +1,35 @@
-=======================
-Scipion cnb plugin
-=======================
+CNB plugin
+============
 
-This is a template plugin for **scipion**
+This plugin adapts utilities for the CNB within the Scipion framework.
 
-==========================
-Steps to adapt this plugin
-==========================
+Setup
+=====
 
-IMPORTANT: To simplify the instructions all the commands would refer to an hypothetical new plugin name called "coolem".
-Note that you must replace "coolem" by your plugin name.
+For Users
+---------
 
-**Clone it:**
+Install `Scipion3`_ and `install`_ the cnb plugin.
 
-.. code-block::
+For developers
+--------------
 
-    git clone https://github.com/scipion-em/scipion-em-template.git scipion-em-coolem
+1. For testing and develop this plugin, you need to use the Scipion v3.0.
+   For that, just install Scipion from `GitHub`_, using the ‘devel’ branch.
+2. Clone this repository in you system:
+   ::
 
-**Reset the git repo**
+      cd
+      git clone https://github.com/scipion-em/scipion-em-cnb
 
-.. code-block::
+3. Install the Topaz plugin in devel mode:
+   ::
 
-    cd scipion-em-coolem
-    rm -rf .git
-    git init
-
-**Empty CHANGES.txt**
-
-.. code-block::
-
-    rm CHANGES.txt && touch CHANGES.txt
-
-**Rename "myplugin" to coolem (IDE might help here)**
-
-.. code-block::
-
-    mv myplugin coolem
-
-**Tidy up imports**
-
-Tip 1: IDE refactrization should rename at once the classes and the imports
-Tip 2: Search in your IDE for "myplugin" and replace by *"coolem"*
-
-coolem/protocols/protocol_hello_world.py:
- class MyPluginPrefixHelloWorld --> class CoolemPrefixHelloWorld
-
-coolem/protocol/__init__.py:
- from .protocol_hello_world import MyPluginPrefixHelloWorld --> from .protocol_hello_world import CoolemPrefixHelloWorld
-
-coolem/wizards/wizard_hello_world.py:
- _targets = [(MyPluginPrefixHelloWorld, ['message'])]  -->     _targets = [(CoolemPrefixHelloWorld, ['message'])]
- class MyPluginPrefixHelloWorldWizard --> class CoolemPrefixHelloWorldWizard
-
-coolem/wizards/__init__.py:
- from .wizard_hello_world import MyPluginPrefixHelloWorldWizard  --> from .wizard_hello_world import CoolemPrefixHelloWorldWizard
-
-protcocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
+      scipion installp -p ~/scipion-em-cnb --devel
 
 
-setup.py:
- update almost all values: name, description, ...
+.. _Scipion3: https://scipion-em.github.io/docs/docs/scipion-modes/how-to-install.html
 
- be sure to update package data
-.. code-block::
+.. _install: https://scipion-em.github.io/docs/docs/scipion-modes/install-from-sources#step-4-installing-xmipp3-and-other-em-plugins
 
-    package_data={  # Optional
-       'coolem': ['icon.png', 'protocols.conf'],
-    }
-
-  and the entry point
-.. code-block::
-
-    entry_points={
-        'pyworkflow.plugin': 'coolem = coolem'
-    }
-
-**Install the plugin in devel mode**
-
-.. code-block::
-
-    scipion3 installp -p /home/me/scipion-em-coolem --devel
-
-TIP: If installation fails, you can access pip options like:
-
-.. code-block::
-
-    scipion3 python -m pip ... (list, install, uninstall)
-
-**Customize it**
-    replace icon.png with your logo.
-    update the bibtex.py with your reference.
-
-**Get rid of this content and keep the readme informative**
-
+.. _GitHub: https://scipion-em.github.io/docs/docs/scipion-modes/install-from-sources#from-github
