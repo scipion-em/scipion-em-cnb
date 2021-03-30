@@ -31,6 +31,7 @@ from pyworkflow.protocol import params, STATUS_NEW
 from pyworkflow.utils import Message
 import pyworkflow.protocol.constants as pwcts
 import os
+import pickle
 
 
 class cnbWritePhaseShift(EMProtocol):
@@ -65,7 +66,9 @@ class cnbWritePhaseShift(EMProtocol):
 
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
-        self.doneCTFs = set([])
+        self.doneCTFsFn = self._getExtraPath('doneCTFs.pickle')
+        if not os.path.exists(self.doneCTFsFn):
+          self.pickleSave(set([]), self.doneCTFsFn)
         self.writtenCTFs = []
         self.ended = False
         self.closeSet = self._insertFunctionStep('closeSetStep', wait=True)
@@ -75,9 +78,10 @@ class cnbWritePhaseShift(EMProtocol):
         if not self.ended:
             closeStep = self._getFirstJoinStep()
             inputCTFs = self.inputCTFs.get()
-            for ctf in inputCTFs:
-                self.lastCTF = ctf
-            if len(inputCTFs) > len(self.doneCTFs):
+            self.lastCTF = list(inputCTFs)[-1]
+            doneCTFs = self.pickleLoad(self.doneCTFsFn)
+
+            if len(inputCTFs) > len(doneCTFs):
                 newDeps.append(self._insertFunctionStep('getLastPhaseShift', prerequisites=[]))
                 newDeps.append(self._insertFunctionStep('createOutputStep', prerequisites=[newDeps[-1]]))
                 closeStep.addPrerequisites(*newDeps)
@@ -109,7 +113,8 @@ class cnbWritePhaseShift(EMProtocol):
             outFn = 'phaseShift.txt'
         if self.lastPhaseShift != None:
             outFile = self.writePath.get() + outFn
-            print('Writing phase shift {} in {}'.format(self.lastPhaseShift, outFile))
+            print('Writing phase shift   {}   from   {}   \nin   {}'.
+                  format(self.lastPhaseShift, self.lastCTF.getPsdFile().split('/')[-1], outFile))
             with open(outFile, 'w') as f:
                 f.write(str(self.lastPhaseShift))
             self.writtenCTFs.append(self.lastCTF.getPsdFile())
@@ -124,7 +129,7 @@ class cnbWritePhaseShift(EMProtocol):
 
       self._defineSourceRelation(self.inputCTFs.get(), self.outputCTFs)
       self.ended = True
-      print('Written CTFs: ', self.writtenCTFs)
+      #print('Written CTFs: ', self.writtenCTFs)
 
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
@@ -186,10 +191,12 @@ class cnbWritePhaseShift(EMProtocol):
       outputSet.close()
 
     def addNewCTFs(self, outCTFs):
+        doneCTFs = self.pickleLoad(self.doneCTFsFn)
         for ctf in self.inputCTFs.get():
-            if not ctf.getPsdFile() in self.doneCTFs:
+            if not ctf.getPsdFile() in doneCTFs:
                 outCTFs.append(ctf)
-                self.doneCTFs.add(ctf.getPsdFile())
+                doneCTFs.add(ctf.getPsdFile())
+        self.pickleSave(doneCTFs, self.doneCTFsFn)
         return outCTFs
 
     def checkIfParentFinished(self):
@@ -198,5 +205,19 @@ class cnbWritePhaseShift(EMProtocol):
         if not inpCTFs.isStreamOpen():
           return True
         return False
+
+    def uploadPickleSet(self, filename, newValue):
+      pSet = self.pickleLoad(filename)
+      pSet.add(newValue)
+      self.pickleSave(pSet, filename)
+
+    def pickleSave(self, data, filename):
+      with open(filename, 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def pickleLoad(self, filename):
+      with open(filename, 'rb') as handle:
+        b = pickle.load(handle)
+      return b
 
 
