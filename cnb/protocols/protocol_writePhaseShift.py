@@ -78,7 +78,6 @@ class cnbWritePhaseShift(EMProtocol):
         if not self.ended:
             closeStep = self._getFirstJoinStep()
             inputCTFs = self.inputCTFs.get()
-            self.lastCTF = list(inputCTFs)[-1]
             doneCTFs = self.pickleLoad(self.doneCTFsFn)
 
             if len(inputCTFs) > len(doneCTFs):
