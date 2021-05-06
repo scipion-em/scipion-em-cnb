@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../scipion-em/.idea/scipion-em.iml" filepath="$PROJECT_DIR$/../scipion-em/.idea/scipion-em.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/scipion-em-cnb.iml" filepath="$PROJECT_DIR$/.idea/scipion-em-cnb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../scipion-em-empiar/.idea/scipion-em-empiar.iml" filepath="$PROJECT_DIR$/../scipion-em-empiar/.idea/scipion-em-empiar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../scipion-em-facilities/.idea/scipion-em-facilities.iml" filepath="$PROJECT_DIR$/../scipion-em-facilities/.idea/scipion-em-facilities.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../scipion-em-topaz/.idea/scipion-em-topaz.iml" filepath="$PROJECT_DIR$/../scipion-em-topaz/.idea/scipion-em-topaz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../xmipp-bundle/src/scipion-em-xmipp/.idea/scipion-em-xmipp.iml" filepath="$PROJECT_DIR$/../xmipp-bundle/src/scipion-em-xmipp/.idea/scipion-em-xmipp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../scipion-pyworkflow/.idea/scipion-pyworkflow.iml" filepath="$PROJECT_DIR$/../scipion-pyworkflow/.idea/scipion-pyworkflow.iml" />
     </modules>
   </component>
 </project>
