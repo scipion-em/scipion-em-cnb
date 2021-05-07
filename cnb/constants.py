@@ -29,12 +29,15 @@ This modules contains constants related to cnb protocols
 """
 
 #Labels which define the type of parameters written
-SetChoices = ['Unknown input protocol', 'Number of movies', 'CTF parameters']
+SetChoices = ['Unknown input protocol', 'Movies parameters', 'CTF parameters']
 
 #Type of sets included
 UNKNOWNSET = 0
 SETOFMOVIES = 1
 SETOFCTF = 2
+
+setTypeDic = {'SetOfMovies': SETOFMOVIES,
+              'SetOfCTF': SETOFCTF}
 
 #Defines the parameters which will be written for each kind of set.
 #In 'item', includes the list of parameters of each ITEM of the set (e.g: phaseshift of each ctf)
