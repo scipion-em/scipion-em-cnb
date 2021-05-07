@@ -31,8 +31,6 @@ from .constants import *
 
 class writeParameterWizard(Wizard):
   _targets = [(cnbWriteParameter, ['paramsToWrite'])]
-  protocolsDic = {'SetOfMovies':SETOFMOVIES,
-                  'SetOfCTF':SETOFCTF}
 
   def _getSetType(self, scipionSet):
     return scipionSet.__str__().split()[0]
@@ -41,8 +39,8 @@ class writeParameterWizard(Wizard):
     if protocol.inputSet.get() != None:
       setType = self._getSetType(protocol.inputSet.get())
       print('Set type: ', setType)
-      if setType in self.protocolsDic:
-        return self.protocolsDic[setType]
+      if setType in setTypeDic:
+        return setTypeDic[setType]
       else:
         return UNKNOWNSET
     else:
