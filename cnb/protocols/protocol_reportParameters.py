@@ -35,11 +35,11 @@ import os, pickle
 from datetime import datetime
 
 
-class cnbWriteParameter(EMProtocol):
+class cnbReportParameters(EMProtocol):
     """
     This protocol will store the ctf phaseshift in a determined file to be parse by SerialEM
     """
-    _label = 'Write parameter'
+    _label = 'Report parameters'
 
     def __init__(self, **kwargs):
         EMProtocol.__init__(self, **kwargs)
