@@ -24,13 +24,13 @@
 # *
 # **************************************************************************
 
-from .protocols import cnbWriteParameter
+from .protocols import cnbReportParameters
 from pyworkflow.wizard import Wizard
 from .constants import *
 
 
 class writeParameterWizard(Wizard):
-  _targets = [(cnbWriteParameter, ['paramsToWrite'])]
+  _targets = [(cnbReportParameters, ['paramsToWrite'])]
 
   def _getSetType(self, scipionSet):
     return scipionSet.__str__().split()[0]
