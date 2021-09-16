@@ -22,7 +22,7 @@ For developers
       cd
       git clone https://github.com/scipion-em/scipion-em-cnb
 
-3. Install the Topaz plugin in devel mode:
+3. Install the CNB plugin in devel mode:
    ::
 
       scipion installp -p ~/scipion-em-cnb --devel
