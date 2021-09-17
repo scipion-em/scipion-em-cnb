@@ -260,10 +260,10 @@ class CNBProtMovieSpiralPosition(ProtProcessMovies):
 
         for movie in newDone:
             movieId = movie.getObjId()
-            newMovie = movie.clone()
+            #newMovie = movie.clone()
             spiral = self.spirals[movieId]
-            setAttribute(newMovie, '_SPIRAL_POSITION', spiral)
-            moviesSet.append(newMovie)
+            setAttribute(movie, '_SPIRAL_POSITION', spiral)
+            moviesSet.append(movie)
             if self.hasAlignment:
                 mic = inputMicSet[movieId].clone()
                 setAttribute(mic, '_SPIRAL_POSITION', spiral)
