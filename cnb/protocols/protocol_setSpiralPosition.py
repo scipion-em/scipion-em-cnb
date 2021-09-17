@@ -143,11 +143,14 @@ class CNBProtMovieSpiralPosition(ProtProcessMovies):
 
     def getSpiralPosition(self, movie):
         movieFn = movie.getFileName()
-        x = movieFn.find("movie_")
-        substr = movieFn[x+6:]
+        movieFnBase = os.path.basename(movieFn)
+        print('MOVIES PATH, NAME AND SPIRAL:')
+        print(movieFn)
+        print(movieFnBase)
+        x = movieFnBase.find("movie_")
+        substr = movieFnBase[x+6:]
         x1 = substr.find("_")
         spiral = substr[x1+1:x1+6]
-        print(movie.getFileName())
         print(int(spiral))
 
         return int(spiral)
