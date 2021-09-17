@@ -171,6 +171,8 @@ class CNBProtMovieSpiralPosition(ProtProcessMovies):
         else:
             outputSet = SetClass(filename=setFile)
             outputSet.setStreamState(outputSet.STREAM_OPEN)
+            inputMovies = self.inputMovies.get()
+            outputSet.copyInfo(inputMovies)
 
         return outputSet
 
