@@ -5,3 +5,4 @@
 # **************************************************************************
 from .protocol_writePhaseShift import cnbWritePhaseShift
 from .protocol_reportParameters import cnbReportParameters
+from .protocol_importAtlas import ProtImportAtlas
