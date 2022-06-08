@@ -30,7 +30,7 @@ from pyworkflow.object import (Float, String, List, Integer)
 
 class Atlas_Low(EMObject):
     """Atlas low magnification information"""
-    #T ODO create viewers as viewer:tomograms.py scipion-em-tomo
+    #TO DO create viewers as viewer:tomograms.py scipion-em-tomo
     def __init__(self, **kwargs):
         EMObject.__init__(self, **kwargs)
         self._filename = String()
@@ -38,10 +38,10 @@ class Atlas_Low(EMObject):
         self._magnification = Float(kwargs.get('magnification', None))
         self._voltage = Float(kwargs.get('voltage', None))
         self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
-        self._ImageFile = Float(kwargs.get('ImageFile', None))
-        self._ImageSize = Float(kwargs.get('ImageSize', None))
-        self._Montage = Float(kwargs.get('Montage', None))
-        self._DataMode = Float(kwargs.get('DataMode', None))
+        self._ImageFile = String(kwargs.get('ImageFile', None))
+        self._ImageSize = List(kwargs.get('ImageSize', None))
+        self._Montage = Integer(kwargs.get('Montage', None))
+        self._DataMode = Integer(kwargs.get('DataMode', None))
 
 
 
@@ -54,28 +54,28 @@ class Atlas_Low(EMObject):
         self._mdoc.set(filename)
 
     def setMagnification(self, _magnification):
-        self._magnification = _magnification
+        self._magnification = float(_magnification)
 
     def setVoltage(self, _voltage):
-        self._voltage = _voltage
+        self._voltage = float(_voltage)
 
     def setPixelSpacing(self, _PixelSpacing):
-        self._PixelSpacing = _PixelSpacing
+        self._PixelSpacing = float(_PixelSpacing)
 
     def setImageFile(self, _ImageFile):
-        self._ImageFile = _ImageFile
+        self._ImageFile = str(_ImageFile)
 
     def setImageSize(self, _ImageSize):
-        self._ImageSize = _ImageSize
+        self._ImageSize = [_ImageSize.split(' ')[0], _ImageSize.split(' ')[0]]
 
     def setMontage(self, _Montage):
-        self._Montage = _Montage
+        self._Montage = int(_Montage)
 
     def setDataMode(self, _DataMode):
-        self._DataMode = _DataMode
+        self._DataMode = int(_DataMode)
 
     def setBinning(self, _Binning):
-        self._Binning = _Binning
+        self._Binning = int(_Binning)
 
 
 
@@ -90,8 +90,8 @@ class Atlas_Low(EMObject):
     def getVoltage(self):
         return self._voltage.get()
 
-    def getVMagnification(self):
-        return self._magnification.get()
+    def getMagnification(self):
+        return self._magnification
 
     def getPixelSpacing(self):
         return self._PixelSpacing.get()

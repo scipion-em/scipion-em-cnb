@@ -62,25 +62,29 @@ class ProtImportAtlas(ProtImport):
     def readParameters(self):
         print('mrc file: {}'.format(self.mdoc_file.get()))
         mdoc = MDoc(self.mdoc_file.get())
-        low_mag_image = Low_mag_image()
         self.headerDict, self.zvalueList = mdoc.parseMdoc()
 
         # print(headerDict)
         # print(zvalueDict[0]['YedgeDxy'])
-        #T ODO create objects Low_mag_image
+        #TOD O  create objects Low_mag_image
 
     def createOutputStep(self):
         atlas = Atlas_Low()
+        atlas.setFileName(self.mrc_file.get())
         atlas.setVoltage(self.headerDict['Voltage'])
         atlas.setPixelSpacing(self.headerDict['PixelSpacing'])
         atlas.setImageFile(self.headerDict['ImageFile'])
         atlas.setImageSize(self.headerDict['ImageSize'])
         atlas.setMontage(self.headerDict['Montage'])
         atlas.setDataMode(self.headerDict['DataMode'])
-
         atlas.setMagnification(self.zvalueList[0]['Magnification'])
         atlas.setBinning(self.zvalueList[0]['Binning'])
 
+
+        #low_mag_image = Low_mag_image()
+
+
+        print('Output: {}'.format(atlas.getMagnification()))
 
 
 
