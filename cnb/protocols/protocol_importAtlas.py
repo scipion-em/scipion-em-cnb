@@ -31,7 +31,7 @@ from pwem.protocols.protocol_import.base import ProtImportFiles, ProtImport
 from pyworkflow.constants import BETA
 from pyworkflow.protocol import params
 from pyworkflow.utils import Message
-
+from ..objects.data import *
 
 class ProtImportAtlas(ProtImport):
     """ Protocol to import Atlas. """
@@ -50,16 +50,42 @@ class ProtImportAtlas(ProtImport):
                            "metadata of the Atlas.")
 
     def _insertAllSteps(self):
+        self.initializeParams()
         self._insertFunctionStep('readParameters')
+        self._insertFunctionStep('createOutputStep')
+
+    def initializeParams(self):
+        self.headerDict = {}
+        self.zvalueList = []
+        self.dictAtlas = {}
 
     def readParameters(self):
-        print('mrc file: {}'.format(self.mrc_file.get()))
-        #TODO read all the parameters from mdoc
-        #TODO dictionary self.dic
+        print('mrc file: {}'.format(self.mdoc_file.get()))
+        mdoc = MDoc(self.mdoc_file.get())
+        low_mag_image = Low_mag_image()
+        self.headerDict, self.zvalueList = mdoc.parseMdoc()
+
+        # print(headerDict)
+        # print(zvalueDict[0]['YedgeDxy'])
+        #T ODO create objects Low_mag_image
 
     def createOutputStep(self):
-        #TODO create ATLAS_LOW class
-        pass
+        atlas = Atlas_Low()
+        atlas.setVoltage(self.headerDict['Voltage'])
+        atlas.setPixelSpacing(self.headerDict['PixelSpacing'])
+        atlas.setImageFile(self.headerDict['ImageFile'])
+        atlas.setImageSize(self.headerDict['ImageSize'])
+        atlas.setMontage(self.headerDict['Montage'])
+        atlas.setDataMode(self.headerDict['DataMode'])
+
+        atlas.setMagnification(self.zvalueList[0]['Magnification'])
+        atlas.setBinning(self.zvalueList[0]['Binning'])
+
+
+
+
+        self._defineOutputs(atlas=atlas)
+
 
     def _validate(self):
         pass
