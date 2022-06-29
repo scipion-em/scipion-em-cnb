@@ -102,12 +102,14 @@ class ProtImportAtlas(ProtImport):
 
 
 
-
         print('Output: {}'.format(atlas.getMagnification()))
 
 
 
-        self._defineOutputs(atlas=atlas, )
+        #self._defineOutputs(atlas=atlas, )
+        self.outputsToDefine = {'atlas': atlas, 'setof_lmi': setOflmi}
+        self._defineOutputs(**self.outputsToDefine)
+
 
 
     def _validate(self):
