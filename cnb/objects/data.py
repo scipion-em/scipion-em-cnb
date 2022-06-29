@@ -25,10 +25,10 @@
 # *  e-mail address 'scipion@cnb.csic.es'
 # *
 # **************************************************************************
-from pwem.objects import EMObject, Image
+from pwem.objects import EMObject, Image, EMSet
 from pyworkflow.object import (Float, String, List, Integer)
 
-class Atlas_Low(EMObject):
+class AtlasLow(EMObject):
     """Atlas low magnification information"""
     #TO DO create viewers as viewer:tomograms.py scipion-em-tomo
     def __init__(self, **kwargs):
@@ -44,9 +44,9 @@ class Atlas_Low(EMObject):
         self._DataMode = Integer(kwargs.get('DataMode', None))
 
 
-
     def setFileName(self, filename):
         """ Use the _objValue attribute to store filename. """
+        print("TYPE:" + str(type(filename)))
         self._filename.set(filename)
 
     def setmDoc(self, filename):
@@ -113,7 +113,7 @@ class Atlas_Low(EMObject):
 
 
 
-class Atlas_Medium(EMObject):
+class AtlasMedium(EMObject):
     """Atlas medium magnification information"""
 
     def __init__(self, **kwargs):
@@ -199,56 +199,340 @@ class Atlas_Medium(EMObject):
 
 
 
-class Low_mag_image(Image):
+class LowMagImage(Image):
     """ Represents an image (slice) of an Atlas object """
 
     def __init__(self, location=None, **kwargs):
         Image.__init__(self, location, **kwargs)
         self._imageName = String()
-
         # definition list parameters : https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
-        self.PieceCoordinates = List(kwargs.get('PieceCoordinates', None))
-        self.MinMaxMean = List(kwargs.get('MinMaxMean', None))
-        self.TiltAngle = List(kwargs.get('TiltAngle', None))
-        self.StagePosition = List(kwargs.get('StagePosition', None))
-        self.StageZ = List(kwargs.get('StageZ', None))
-        self.Magnification = Integer(kwargs.get('Magnification', None))
-        self.Intensity = Float(kwargs.get('Intensity', None))
-        self.ExposureDose = Float(kwargs.get('ExposureDose', None))
-        self.DoseRate = Float(kwargs.get('DoseRate', None))
-        self.PixelSpacing = Float(kwargs.get('PixelSpacing', None))
-        self.SpotSize = Float(kwargs.get('SpotSize', None))
-        self.Defocus = Float(kwargs.get('Defocus', None))
-        self.ImageShift = List(kwargs.get('ImageShift', None))
-        self.RotationAngle = Float(kwargs.get('RotationAngle', None))
-        self.ExposureTime = Float(kwargs.get('ExposureTime', None))
-        self.Binning = Float(kwargs.get('Binning', None))
-        self.CameraIndex = Integer(kwargs.get('CameraIndex', None))
-        self.DividedBy2 = Integer(kwargs.get('DividedBy2', None))
-        self.OperatingMode = Integer(kwargs.get('OperatingMode', None))
-        self.UsingCDS = Integer(kwargs.get('UsingCDS', None))
-        self.MagIndex = Integer(kwargs.get('MagIndex', None))
-        self.LowDoseConSet = Float(kwargs.get('LowDoseConSet', None))
-        self.CountsPerElectron = Integer(kwargs.get('CountsPerElectron', None))
-        self.TargetDefocus = Float(kwargs.get('TargetDefocus', None))
-        self.DateTime = String(kwargs.get('DateTime', None))
-        self.FilterSlitAndLoss = List(kwargs.get('FilterSlitAndLoss', None))
-        self.UncroppedSize = List(kwargs.get('UncroppedSize', None))
-        self.RotationAndFlip = Integer(kwargs.get('RotationAndFlip', None))
-        self.AlignedPieceCoords = List(kwargs.get('AlignedPieceCoords', None))
-        self.XedgeDxy = List(kwargs.get('XedgeDxy', None))
-        self.YedgeDxy = List(kwargs.get('YedgeDxy', None))
+        self._PieceCoordinates = List(kwargs.get('PieceCoordinates', None))
+        self._MinMaxMean = List(kwargs.get('MinMaxMean', None))
+        self._TiltAngle = List(kwargs.get('TiltAngle', None))
+        self._StagePosition = List(kwargs.get('StagePosition', None))
+        self._StageZ = List(kwargs.get('StageZ', None))
+        self._Magnification = Integer(kwargs.get('Magnification', None))
+        self._Intensity = Float(kwargs.get('Intensity', None))
+        self._ExposureDose = Float(kwargs.get('ExposureDose', None))
+        self._DoseRate = Float(kwargs.get('DoseRate', None))
+        self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
+        self._SpotSize = Float(kwargs.get('SpotSize', None))
+        self._Defocus = Float(kwargs.get('Defocus', None))
+        self._ImageShift = List(kwargs.get('ImageShift', None))
+        self._RotationAngle = Float(kwargs.get('RotationAngle', None))
+        self._ExposureTime = Float(kwargs.get('ExposureTime', None))
+        self._Binning = Float(kwargs.get('Binning', None))
+        self._CameraIndex = Integer(kwargs.get('CameraIndex', None))
+        self._DividedBy2 = Integer(kwargs.get('DividedBy2', None))
+        self._OperatingMode = Integer(kwargs.get('OperatingMode', None))
+        self._UsingCDS = Integer(kwargs.get('UsingCDS', None))
+        self._MagIndex = Integer(kwargs.get('MagIndex', None))
+        self._LowDoseConSet = Float(kwargs.get('LowDoseConSet', None))
+        self._CountsPerElectron = Integer(kwargs.get('CountsPerElectron', None))
+        self._TargetDefocus = Float(kwargs.get('TargetDefocus', None))
+        self._DateTime = String(kwargs.get('DateTime', None))
+        self._FilterSlitAndLoss = List(kwargs.get('FilterSlitAndLoss', None))
+        self._UncroppedSize = List(kwargs.get('UncroppedSize', None))
+        self._RotationAndFlip = Integer(kwargs.get('RotationAndFlip', None))
+        self._AlignedPieceCoords = List(kwargs.get('AlignedPieceCoords', None))
+        self._XedgeDxy = List(kwargs.get('XedgeDxy', None))
+        self._YedgeDxy = List(kwargs.get('YedgeDxy', None))
 
+    #imageName
     def setImageName(self, imageName):
         self._imageName.set(imageName)
 
     def getImageName(self):
-        if self._imageName.get():
-            return self._imageName.get()
-        else:
-            self.getFileName()
+        self._imageName.get()
+        
+    #PieceCoordinates
+    def setPieceCoordinates(self, PieceCoordinates):
+        self._PieceCoordinates.set(PieceCoordinates)
+
+    def getPieceCoordinates(self):
+        self._PieceCoordinates.get()
+
+    #MinMaxMean
+    def setMinMaxMean(self, MinMaxMean):
+        self._MinMaxMean.set(MinMaxMean)
+
+    def getMinMaxMean(self):
+        self._MinMaxMean.get()
+
+    #TiltAngle
+    def setTiltAngle(self, TiltAngle):
+        self._TiltAngle.set(TiltAngle)
+
+    def getTiltAngle(self):
+        self._TiltAngle.get()
+
+    #StagePosition
+    def setStagePosition(self, StagePosition):
+        self._StagePosition.set(StagePosition)
+
+    def getStagePosition(self):
+        self._StagePosition.get()
+
+    #StageZ
+    def setStageZ(self, StageZ):
+        self._StageZ.set(StageZ)
+
+    def getStageZ(self):
+        self._StageZ.get()
+
+    #Magnification
+    def setMagnification(self, Magnification):
+        self._Magnification.set(Magnification)
+
+    def getMagnification(self):
+        self._Magnification.get()
+
+    #Intensity
+    def setIntensity(self, Intensity):
+        self._Intensity.set(Intensity)
+
+    def getIntensity(self):
+        self._Intensity.get()
+
+    #ExposureDose
+    def setExposureDose(self, ExposureDose):
+        self._ExposureDose.set(ExposureDose)
+
+    def getExposureDose(self):
+        self._ExposureDose.get()
+
+    #DoseRate
+    def setDoseRate(self, DoseRate):
+        self._DoseRate.set(DoseRate)
+
+    def getDoseRate(self):
+        self._DoseRate.get()
+
+    #PixelSpacing
+    def setPixelSpacing(self, PixelSpacing):
+        self._PixelSpacing.set(PixelSpacing)
+
+    def getPixelSpacing(self):
+        self._PixelSpacing.get()
+
+    #SpotSize
+    def setSpotSize(self, SpotSize):
+        self._SpotSize.set(SpotSize)
+
+    def getSpotSize(self):
+        self._SpotSize.get()
+
+    #Defocus
+    def setDefocus(self, Defocus):
+        self._Defocus.set(Defocus)
+
+    def getDefocus(self):
+        self._Defocus.get()
+
+    #ImageShift
+    def setImageShift(self, ImageShift):
+        self._ImageShift.set(ImageShift)
+
+    def getImageShift(self):
+        self._ImageShift.get()
+
+    #RotationAngle
+    def setRotationAngle(self, RotationAngle):
+        self._RotationAngle.set(RotationAngle)
+
+    def getRotationAngle(self):
+        self._RotationAngle.get()
+
+    #ExposureTime
+    def setExposureTime(self, ExposureTime):
+        self._ExposureTime.set(ExposureTime)
+
+    def getExposureTime(self):
+        self._ExposureTime.get()
+
+    #Binning
+    def setBinning(self, Binning):
+        self._Binning.set(Binning)
+
+    def getBinning(self):
+        self._Binning.get()
+
+    #CameraIndex
+    def setCameraIndex(self, CameraIndex):
+        self._CameraIndex.set(CameraIndex)
+
+    def getCameraIndex(self):
+        self._CameraIndex.get()
+
+    #DividedBy2
+    def setDividedBy2(self, DividedBy2):
+        self._DividedBy2.set(DividedBy2)
+
+    def getDividedBy2(self):
+        self._DividedBy2.get()
+
+    #OperatingMode
+    def setOperatingMode(self, OperatingMode):
+        self._OperatingMode.set(OperatingMode)
+
+    def getOperatingMode(self):
+        self._OperatingMode.get()
+
+    #UsingCDS
+    def setUsingCDS(self, UsingCDS):
+        self._UsingCDS.set(UsingCDS)
+
+    def getUsingCDS(self):
+        self._UsingCDS.get()
+
+    #MagIndex
+    def setMagIndex(self, MagIndex):
+        self._MagIndex.set(MagIndex)
+
+    def getMagIndex(self):
+        self._MagIndex.get()
+
+    #LowDoseConSet
+    def setLowDoseConSet(self, LowDoseConSet):
+        self._LowDoseConSet.set(LowDoseConSet)
+
+    def getLowDoseConSet(self):
+        self._LowDoseConSet.get()
+
+    #CountsPerElectron
+    def setCountsPerElectron(self, CountsPerElectron):
+        self._CountsPerElectron.set(CountsPerElectron)
+
+    def getCountsPerElectron(self):
+        self._CountsPerElectron.get()
+
+    #TargetDefocus
+    def setTargetDefocus(self, TargetDefocus):
+        self._TargetDefocus.set(TargetDefocus)
+
+    def getTargetDefocus(self):
+        self._TargetDefocus.get()
+
+    #DateTime
+    def setDateTime(self, DateTime):
+        self._DateTime.set(DateTime)
+
+    def getDateTime(self):
+        self._DateTime.get()
+
+    #FilterSlitAndLoss
+    def setFilterSlitAndLoss(self, FilterSlitAndLoss):
+        self._FilterSlitAndLoss.set(FilterSlitAndLoss)
+
+    def getFilterSlitAndLoss(self):
+        self._FilterSlitAndLoss.get()
+
+    #UncroppedSize
+    def setUncroppedSize(self, UncroppedSize):
+        self._UncroppedSize.set(UncroppedSize)
+
+    def getUncroppedSize(self):
+        self._UncroppedSize.get()
+
+    #RotationAndFlip
+    def setRotationAndFlip(self, RotationAndFlip):
+        self._RotationAndFlip.set(RotationAndFlip)
+
+    def getRotationAndFlip(self):
+        self._RotationAndFlip.get()
+
+    #AlignedPieceCoords
+    def setAlignedPieceCoords(self, AlignedPieceCoords):
+        self._AlignedPieceCoords.set(AlignedPieceCoords)
+
+    def getAlignedPieceCoords(self):
+        self._AlignedPieceCoords.get()
+
+    #XedgeDxy
+    def setXedgeDxy(self, XedgeDxy):
+        self._XedgeDxy.set(XedgeDxy)
+
+    def getXedgeDxy(self):
+        self._XedgeDxy.get()
+
+    #YedgeDxy
+    def setYedgeDxy(self, YedgeDxy):
+        self._YedgeDxy.set(YedgeDxy)
+
+    def getYedgeDxy(self):
+        self._YedgeDxy.get()
 
 
+
+class SetClassOfLowMagImages(EMSet):
+    ITEM_TYPE = LowMagImage
+    def __init__(self, **kwargs):
+        EMSet.__init__(self, **kwargs)
+        self._magnification = Float(kwargs.get('magnification', None))
+        self._voltage = Float(kwargs.get('voltage', None))
+        self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
+        self._ImageFile = String(kwargs.get('ImageFile', None))
+        self._ImageSize = List(kwargs.get('ImageSize', None))
+        self._Montage = Integer(kwargs.get('Montage', None))
+        self._DataMode = Integer(kwargs.get('DataMode', None))
+
+
+    def setMagnification(self, _magnification):
+        self._magnification = float(_magnification)
+
+    def setVoltage(self, _voltage):
+        self._voltage = float(_voltage)
+
+    def setPixelSpacing(self, _PixelSpacing):
+        self._PixelSpacing = float(_PixelSpacing)
+
+    def setImageFile(self, _ImageFile):
+        self._ImageFile = str(_ImageFile)
+
+    def setImageSize(self, _ImageSize):
+        self._ImageSize = [_ImageSize.split(' ')[0], _ImageSize.split(' ')[0]]
+
+    def setMontage(self, _Montage):
+        self._Montage = int(_Montage)
+
+    def setDataMode(self, _DataMode):
+        self._DataMode = int(_DataMode)
+
+    def setBinning(self, _Binning):
+        self._Binning = int(_Binning)
+
+
+    def getVoltage(self):
+        return self._voltage.get()
+
+    def getMagnification(self):
+        return self._magnification
+
+    def getPixelSpacing(self):
+        return self._PixelSpacing.get()
+
+    def getImageFile(self):
+        return self._ImageFile.get()
+
+    def getImageSize(self):
+        return self._ImageSize.get()
+
+    def getMontage(self):
+        return self._Montage.get()
+
+    def getDataMode(self):
+        return self._DataMode.get()
+
+    def getBinning(self):
+        return self._Binning.get()
+
+
+    def append(self, image):
+        """ Add a image to the set. """
+        if self.isEmpty():
+            self._setFirstDim(image)
+
+        EMSet.append(self, image)
 
 
 class MDoc:
@@ -277,7 +561,7 @@ class MDoc:
     """
 
     def __init__(self, fileName):
-        self._mdocFileName = fileName
+        self._mdocFileName = str(fileName)
 
     def parseMdoc(self):
         """

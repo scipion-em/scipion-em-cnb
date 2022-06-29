@@ -26,12 +26,14 @@
 # *
 # **************************************************************************
 
-from ..objects import Atlas_Low
+from ..objects import AtlasLow
+import os
 from pwem.protocols.protocol_import.base import ProtImportFiles, ProtImport
 from pyworkflow.constants import BETA
 from pyworkflow.protocol import params
 from pyworkflow.utils import Message
 from ..objects.data import *
+
 
 class ProtImportAtlas(ProtImport):
     """ Protocol to import Atlas. """
@@ -43,11 +45,13 @@ class ProtImportAtlas(ProtImport):
         form.addParam('mrc_file', params.FileParam,
                   label='mrc file',
                   help="Select the Atlas mrc file that contain all the \n"
-                           "slices of the Atlas.")
-        form.addParam('mdoc_file', params.FileParam,
-                  label='mdoc file',
-                  help="Select the Atlas mdoc file that contain the \n"
-                           "metadata of the Atlas.")
+                           "slices of the Atlas. The protocol will import the"
+                       " mdoc file (it has the same name that the mrc file)")
+
+    def readMdocFile(self):
+        self.mdcoc_file = str(self.mrc_file.get() + '.mdoc')
+        print(type(self.mdcoc_file))
+
 
     def _insertAllSteps(self):
         self.initializeParams()
@@ -55,21 +59,19 @@ class ProtImportAtlas(ProtImport):
         self._insertFunctionStep('createOutputStep')
 
     def initializeParams(self):
+        self.readMdocFile()
         self.headerDict = {}
         self.zvalueList = []
-        self.dictAtlas = {}
 
     def readParameters(self):
-        print('mrc file: {}'.format(self.mdoc_file.get()))
-        mdoc = MDoc(self.mdoc_file.get())
+        mdoc = MDoc(self.mdoc_file)
         self.headerDict, self.zvalueList = mdoc.parseMdoc()
-
         # print(headerDict)
-        # print(zvalueDict[0]['YedgeDxy'])
+        print(self.zvalueList[0]['StagePosition'])
         #TOD O  create objects Low_mag_image
 
     def createOutputStep(self):
-        atlas = Atlas_Low()
+        atlas = AtlasLow()
         atlas.setFileName(self.mrc_file.get())
         atlas.setVoltage(self.headerDict['Voltage'])
         atlas.setPixelSpacing(self.headerDict['PixelSpacing'])
@@ -80,16 +82,39 @@ class ProtImportAtlas(ProtImport):
         atlas.setMagnification(self.zvalueList[0]['Magnification'])
         atlas.setBinning(self.zvalueList[0]['Binning'])
 
+        setOflmi = SetClassOfLowMagImages()
 
-        #low_mag_image = Low_mag_image()
+        for dict in self.zvalueList:
+            lmi = LowMagImage()
+
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+            lmi.setMagnification(dict['Magnification'])
+
+
+
+            setOflmi.append(lmi)
+
+
 
 
         print('Output: {}'.format(atlas.getMagnification()))
 
 
 
-        self._defineOutputs(atlas=atlas)
+        self._defineOutputs(atlas=atlas, )
 
 
     def _validate(self):
         pass
+
+
+# def setAttribute(obj, label, value):
+#     if value is None:
+#         return
+#     setattr(obj, label, getScipionObj(value))
