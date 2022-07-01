@@ -26,7 +26,7 @@
 # *
 # **************************************************************************
 from pwem.objects import EMObject, Image, EMSet
-from pyworkflow.object import (Float, String, List, Integer)
+from pyworkflow.object import (Float, String, List, Integer, CsvList)
 
 class AtlasLow(EMObject):
     """Atlas low magnification information"""
@@ -39,7 +39,7 @@ class AtlasLow(EMObject):
         self._voltage = Float(kwargs.get('voltage', None))
         self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
         self._ImageFile = String(kwargs.get('ImageFile', None))
-        self._ImageSize = List(kwargs.get('ImageSize', None))
+        self._ImageSize = CsvList(kwargs.get('ImageSize', None))
         self._Montage = Integer(kwargs.get('Montage', None))
         self._DataMode = Integer(kwargs.get('DataMode', None))
 
@@ -203,11 +203,11 @@ class LowMagImage(Image):
     def __init__(self, location=None, **kwargs):
         EMObject.__init__(self, location, **kwargs)
         self._imageName = String()
-        # definition list parameters : https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
-        self._PieceCoordinates = List(kwargs.get('PieceCoordinates', None))
-        self._MinMaxMean = List(kwargs.get('MinMaxMean', None))
+        # definition CsvList parameters : https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
+        self._PieceCoordinates = CsvList()
+        self._MinMaxMean = CsvList()
         self._TiltAngle = Float(kwargs.get('TiltAngle', None))
-        self._StagePosition = List(kwargs.get('StagePosition', None))
+        self._StagePosition = CsvList(kwargs.get('StagePosition', None))
         self._StageZ = Float(kwargs.get('StageZ', None))
         self._Magnification = Integer(kwargs.get('Magnification', None))
         self._Intensity = Float(kwargs.get('Intensity', None))
@@ -216,7 +216,7 @@ class LowMagImage(Image):
         self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
         self._SpotSize = Float(kwargs.get('SpotSize', None))
         self._Defocus = Float(kwargs.get('Defocus', None))
-        self._ImageShift = List(kwargs.get('ImageShift', None))
+        self._ImageShift = CsvList()
         self._RotationAngle = Float(kwargs.get('RotationAngle', None))
         self._ExposureTime = Float(kwargs.get('ExposureTime', None))
         self._Binning = Float(kwargs.get('Binning', None))
@@ -229,12 +229,12 @@ class LowMagImage(Image):
         self._CountsPerElectron = Integer(kwargs.get('CountsPerElectron', None))
         self._TargetDefocus = Float(kwargs.get('TargetDefocus', None))
         self._DateTime = String(kwargs.get('DateTime', None))
-        self._FilterSlitAndLoss = List(kwargs.get('FilterSlitAndLoss', None))
-        self._UncroppedSize = List(kwargs.get('UncroppedSize', None))
+        self._FilterSlitAndLoss = CsvList()
+        self._UncroppedSize = CsvList()
         self._RotationAndFlip = Integer(kwargs.get('RotationAndFlip', None))
-        self._AlignedPieceCoords = List(kwargs.get('AlignedPieceCoords', None))
-        self._XedgeDxy = List(kwargs.get('XedgeDxy', None))
-        self._YedgeDxy = List(kwargs.get('YedgeDxy', None))
+        self._AlignedPieceCoords = CsvList()
+        self._XedgeDxy = CsvList()
+        self._YedgeDxy = CsvList()
 
     #imageName
     def setImageName(self, imageName):
@@ -461,7 +461,7 @@ class LowMagImage(Image):
         self._YedgeDxy.get()
 
 
-class SetClassOfLowMagImages(EMSet):
+class SetOfLowMagImages(EMSet):
     ITEM_TYPE = LowMagImage
     def __init__(self, **kwargs):
         EMSet.__init__(self, **kwargs)
@@ -469,7 +469,7 @@ class SetClassOfLowMagImages(EMSet):
         self._voltage = Float(kwargs.get('voltage', None))
         self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
         self._ImageFile = String(kwargs.get('ImageFile', None))
-        self._ImageSize = List(kwargs.get('ImageSize', None))
+        self._ImageSize = CsvList(kwargs.get('ImageSize', None))
         self._Montage = Integer(kwargs.get('Montage', None))
         self._DataMode = Integer(kwargs.get('DataMode', None))
 

@@ -95,9 +95,8 @@ class ProtImportAtlas(ProtImport):
         atlas.setMagnification(self.zvalueList[0]['Magnification'])
         atlas.setBinning(self.zvalueList[0]['Binning'])
 
-        setOflmi = SetClassOfLowMagImages()
-        #setOflmi._mapperPath.set('%s, %s' % (self.sqliteFile.get(), ''))
-
+        setOflmi = SetOfLowMagImages.create(self._getPath())
+        #setOflmi.__str__()
 
         setOflmi.setVoltage(self.headerDict['Voltage'])
         setOflmi.setPixelSpacing(self.headerDict['PixelSpacing'])
@@ -138,12 +137,13 @@ class ProtImportAtlas(ProtImport):
             lmi.setUncroppedSize(dict['UncroppedSize'])
             lmi.setRotationAndFlip(dict['RotationAndFlip'])
             lmi.setAlignedPieceCoords(dict['AlignedPieceCoords'])
-            lmi.setXedgeDxy(dict['XedgeDxy'])
-            lmi.setYedgeDxy(dict['YedgeDxy'])
+            #lmi.setXedgeDxy(dict['XedgeDxy'])
+            #lmi.setYedgeDxy(dict['YedgeDxy'])
 
             setOflmi.append(lmi)
 
-        print('Output: {}'.format(atlas.getMagnification()))
+        self.info('Output: {}'.format(atlas.getMagnification()))
+        self.debug('Solo si esta activado modo debug')
         #self._defineOutputs(atlas=atlas, )
         self.outputsToDefine = {'atlas': atlas, 'setof_lmi': setOflmi}
         self._defineOutputs(**self.outputsToDefine)
@@ -158,9 +158,9 @@ class ProtImportAtlas(ProtImport):
         if os.path.isfile(self.mrc_file.get()):
             atlasImages = ImageHandler().read(self.mrc_file.get())
             images = atlasImages.getData()
-            print('self.mrc_file.get(): {}'.format(self.mrc_file.get()))
-            print(atlasImages)
-            print(np.shape(images))
+            # print('self.mrc_file.get(): {}'.format(self.mrc_file.get()))
+            # print(atlasImages)
+            # print(np.shape(images))
             for d in range(np.shape(images)[0]):
                 slice_image = ImageHandler().createImage()
                 sliceMatrix = images[d, :, :]
@@ -181,20 +181,14 @@ class ProtImportAtlas(ProtImport):
         except ValueError:
             pass
         if string.__contains__(' '): #list
-            list = string.split(' ')
-            try:  # int
-                return [int(i) for i in list]
-            except ValueError:
-                try:  # int
-                    return [float(i) for i in list]
-                except ValueError:
-                    pass
+            str2Csv = string.replace(' ', ',')
+            return str2Csv
         try:#int
-            return int(string)
+            return Integer(string)
         except ValueError:
             pass
         try:#float
-            return float(string)
+            return Float(string)
         except ValueError:
             pass
 
