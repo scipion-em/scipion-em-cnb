@@ -66,7 +66,7 @@ class AtlasLow(EMObject):
         self._ImageFile = str(_ImageFile)
 
     def setImageSize(self, _ImageSize):
-        self._ImageSize = [_ImageSize.split(' ')[0], _ImageSize.split(' ')[0]]
+        self._ImageSize = _ImageSize
 
     def setMontage(self, _Montage):
         self._Montage = int(_Montage)
@@ -110,7 +110,6 @@ class AtlasLow(EMObject):
 
     def getBinning(self):
         return self._Binning.get()
-
 
 
 class AtlasMedium(EMObject):
@@ -198,19 +197,18 @@ class AtlasMedium(EMObject):
         return self._Binning.get()
 
 
-
-class LowMagImage(Image):
+class LowMagImage(EMObject):
     """ Represents an image (slice) of an Atlas object """
 
     def __init__(self, location=None, **kwargs):
-        Image.__init__(self, location, **kwargs)
+        EMObject.__init__(self, location, **kwargs)
         self._imageName = String()
         # definition list parameters : https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
         self._PieceCoordinates = List(kwargs.get('PieceCoordinates', None))
         self._MinMaxMean = List(kwargs.get('MinMaxMean', None))
-        self._TiltAngle = List(kwargs.get('TiltAngle', None))
+        self._TiltAngle = Float(kwargs.get('TiltAngle', None))
         self._StagePosition = List(kwargs.get('StagePosition', None))
-        self._StageZ = List(kwargs.get('StageZ', None))
+        self._StageZ = Float(kwargs.get('StageZ', None))
         self._Magnification = Integer(kwargs.get('Magnification', None))
         self._Intensity = Float(kwargs.get('Intensity', None))
         self._ExposureDose = Float(kwargs.get('ExposureDose', None))
@@ -463,7 +461,6 @@ class LowMagImage(Image):
         self._YedgeDxy.get()
 
 
-
 class SetClassOfLowMagImages(EMSet):
     ITEM_TYPE = LowMagImage
     def __init__(self, **kwargs):
@@ -490,7 +487,7 @@ class SetClassOfLowMagImages(EMSet):
         self._ImageFile = str(_ImageFile)
 
     def setImageSize(self, _ImageSize):
-        self._ImageSize = [_ImageSize.split(' ')[0], _ImageSize.split(' ')[0]]
+        self._ImageSize = _ImageSize
 
     def setMontage(self, _Montage):
         self._Montage = int(_Montage)
@@ -527,12 +524,10 @@ class SetClassOfLowMagImages(EMSet):
         return self._Binning.get()
 
 
-    def append(self, image):
-        """ Add a image to the set. """
-        if self.isEmpty():
-            self._setFirstDim(image)
+    # def append(self, image):
+    #     """ Add a image to the set. """
+    #     EMSet.append(self, image)
 
-        EMSet.append(self, image)
 
 
 class MDoc:
@@ -588,6 +583,7 @@ class MDoc:
                 elif line.startswith('[T'):  # auxiliary global information
                     strLine = line.strip().replace(' ', '').\
                                            replace(',', '').lower()
+                    headerDict['auxiliary'] = strLine
                 elif line.strip():  # global variables no in [T sections]
                     key, value = line.split('=')
                     if not headerParsed:

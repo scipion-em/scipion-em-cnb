@@ -33,11 +33,12 @@ from pyworkflow.constants import BETA
 from pyworkflow.protocol import params
 from pyworkflow.utils import Message
 from ..objects.data import *
-
+from datetime import datetime
 
 class ProtImportAtlas(ProtImport):
     """ Protocol to import Atlas. """
     _label = 'import Atlas'
+    _mdoc_file = ''
     _devStatus = BETA
 
     def _defineParams(self, form):
@@ -49,9 +50,7 @@ class ProtImportAtlas(ProtImport):
                        " mdoc file (it has the same name that the mrc file)")
 
     def readMdocFile(self):
-        self.mdcoc_file = str(self.mrc_file.get() + '.mdoc')
-        print(type(self.mdcoc_file))
-
+        return str(self.mrc_file.get() + '.mdoc')
 
     def _insertAllSteps(self):
         self.initializeParams()
@@ -59,16 +58,23 @@ class ProtImportAtlas(ProtImport):
         self._insertFunctionStep('createOutputStep')
 
     def initializeParams(self):
-        self.readMdocFile()
+        self.mdoc_file = self.readMdocFile()
         self.headerDict = {}
         self.zvalueList = []
 
     def readParameters(self):
         mdoc = MDoc(self.mdoc_file)
-        self.headerDict, self.zvalueList = mdoc.parseMdoc()
-        # print(headerDict)
-        print(self.zvalueList[0]['StagePosition'])
-        #TOD O  create objects Low_mag_image
+        hDict, valueList = mdoc.parseMdoc()
+        self.zvalueList = []
+        self.headerDict = {}
+        for k, v in hDict.items():
+            self.headerDict[k] = self.getStringType(v)
+
+        for l in valueList:
+            dic = {}
+            for k, v in l.items():
+                dic[k] = self.getStringType(v)
+            self.zvalueList.append(dic)
 
     def createOutputStep(self):
         atlas = AtlasLow()
@@ -83,37 +89,90 @@ class ProtImportAtlas(ProtImport):
         atlas.setBinning(self.zvalueList[0]['Binning'])
 
         setOflmi = SetClassOfLowMagImages()
+        #setOflmi._mapperPath.set('%s, %s' % (self.sqliteFile.get(), ''))
+
+
+        setOflmi.setVoltage(self.headerDict['Voltage'])
+        setOflmi.setPixelSpacing(self.headerDict['PixelSpacing'])
+        setOflmi.setImageFile(self.headerDict['ImageFile'])
+        setOflmi.setImageSize(self.headerDict['ImageSize'])
+        setOflmi.setMontage(self.headerDict['Montage'])
+        setOflmi.setDataMode(self.headerDict['DataMode'])
+        setOflmi.setMagnification(self.zvalueList[0]['Magnification'])
+        setOflmi.setBinning(self.zvalueList[0]['Binning'])
 
         for dict in self.zvalueList:
             lmi = LowMagImage()
-
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-            lmi.setMagnification(dict['Magnification'])
-
-
+            lmi.setPieceCoordinates(dict['PieceCoordinates'])
+            lmi.setMinMaxMean(dict['MinMaxMean'])
+            lmi.setTiltAngle(dict['TiltAngle'])
+            lmi.setStageZ(dict['StageZ'])
+            lmi.setIntensity(dict['Intensity'])
+            lmi.setExposureDose(dict['ExposureDose'])
+            lmi.setDoseRate(dict['DoseRate'])
+            lmi.setPixelSpacing(dict['PixelSpacing'])
+            lmi.setSpotSize(dict['SpotSize'])
+            lmi.setDefocus(dict['Defocus'])
+            lmi.setImageShift(dict['ImageShift'])
+            lmi.setRotationAngle(dict['RotationAngle'])
+            lmi.setExposureTime(dict['ExposureTime'])
+            lmi.setBinning(dict['Binning'])
+            lmi.setCameraIndex(dict['CameraIndex'])
+            lmi.setDividedBy2(dict['DividedBy2'])
+            lmi.setOperatingMode(dict['OperatingMode'])
+            lmi.setUsingCDS(dict['UsingCDS'])
+            lmi.setMagIndex(dict['MagIndex'])
+            lmi.setLowDoseConSet(dict['LowDoseConSet'])
+            lmi.setCountsPerElectron(dict['CountsPerElectron'])
+            lmi.setTargetDefocus(dict['TargetDefocus'])
+            lmi.setDateTime(dict['DateTime'])
+            lmi.setFilterSlitAndLoss(dict['FilterSlitAndLoss'])
+            lmi.setUncroppedSize(dict['UncroppedSize'])
+            lmi.setRotationAndFlip(dict['RotationAndFlip'])
+            lmi.setAlignedPieceCoords(dict['AlignedPieceCoords'])
+            lmi.setXedgeDxy(dict['XedgeDxy'])
+            lmi.setYedgeDxy(dict['YedgeDxy'])
 
             setOflmi.append(lmi)
 
-
-
         print('Output: {}'.format(atlas.getMagnification()))
-
-
-
         #self._defineOutputs(atlas=atlas, )
         self.outputsToDefine = {'atlas': atlas, 'setof_lmi': setOflmi}
         self._defineOutputs(**self.outputsToDefine)
 
 
-
     def _validate(self):
         pass
+
+
+    def getStringType(self, string):
+        if string == 'None':
+            return string
+        try:#date
+            date = datetime.strptime(string, '%d-%b-%y %H:%M:%S')
+            return date
+        except ValueError:
+            pass
+        if string.__contains__(' '): #list
+            list = string.split(' ')
+            try:  # int
+                return [int(i) for i in list]
+            except ValueError:
+                try:  # int
+                    return [float(i) for i in list]
+                except ValueError:
+                    pass
+        try:#int
+            return int(string)
+        except ValueError:
+            pass
+        try:#float
+            return float(string)
+        except ValueError:
+            pass
+
+        return string
+
 
 
 # def setAttribute(obj, label, value):
