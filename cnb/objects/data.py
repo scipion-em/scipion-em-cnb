@@ -197,7 +197,7 @@ class AtlasMedium(EMObject):
         return self._Binning.get()
 
 
-class LowMagImage(EMObject):
+class LowMagImage(Image):
     """ Represents an image (slice) of an Atlas object """
 
     def __init__(self, location=None, **kwargs):

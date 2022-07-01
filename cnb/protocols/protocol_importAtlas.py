@@ -34,6 +34,8 @@ from pyworkflow.protocol import params
 from pyworkflow.utils import Message
 from ..objects.data import *
 from datetime import datetime
+from pwem.emlib.image import ImageHandler
+import numpy as np
 
 class ProtImportAtlas(ProtImport):
     """ Protocol to import Atlas. """
@@ -62,6 +64,7 @@ class ProtImportAtlas(ProtImport):
         self.headerDict = {}
         self.zvalueList = []
 
+
     def readParameters(self):
         mdoc = MDoc(self.mdoc_file)
         hDict, valueList = mdoc.parseMdoc()
@@ -74,7 +77,11 @@ class ProtImportAtlas(ProtImport):
             dic = {}
             for k, v in l.items():
                 dic[k] = self.getStringType(v)
+                #print(k, v, dic[k])
             self.zvalueList.append(dic)
+
+        self.createImagesSlices()
+
 
     def createOutputStep(self):
         atlas = AtlasLow()
@@ -103,6 +110,7 @@ class ProtImportAtlas(ProtImport):
 
         for dict in self.zvalueList:
             lmi = LowMagImage()
+
             lmi.setPieceCoordinates(dict['PieceCoordinates'])
             lmi.setMinMaxMean(dict['MinMaxMean'])
             lmi.setTiltAngle(dict['TiltAngle'])
@@ -145,6 +153,25 @@ class ProtImportAtlas(ProtImport):
         pass
 
 
+
+    def createImagesSlices(self):
+        if os.path.isfile(self.mrc_file.get()):
+            atlasImages = ImageHandler().read(self.mrc_file.get())
+            images = atlasImages.getData()
+            print('self.mrc_file.get(): {}'.format(self.mrc_file.get()))
+            print(atlasImages)
+            print(np.shape(images))
+            for d in range(np.shape(images)[0]):
+                slice_image = ImageHandler().createImage()
+                sliceMatrix = images[d, :, :]
+                slice_image.setData(sliceMatrix)
+                slice_image.write(os.path.join(self._getExtraPath(),
+                                               '{}_slice.mrc'.format(d)))
+
+
+
+
+    #UTILS
     def getStringType(self, string):
         if string == 'None':
             return string
