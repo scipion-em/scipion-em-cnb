@@ -34,8 +34,8 @@ from pyworkflow.object import (Float, String, List, Integer, CsvList)
 class Atlas(EMObject):
     """Atlas low magnification information"""
     #TO DO create viewers as viewer:tomograms.py scipion-em-tomo
-    def __init__(self):
-        EMObject.__init__(self)
+    def __init__(self,  **kwargs):
+        EMObject.__init__(self,  **kwargs)
         self._filename = String()
         self._mdoc = String()
         self._magnification = Float()
@@ -116,29 +116,29 @@ class Atlas(EMObject):
         return self._Binning.get()
 
 class AtlasLow(Atlas):
-    def __init__(self):
-        Atlas.__init__(self)
-        self._setOfMagImages = SetOfLowMagImages()
-
-    # setOfMagImages
-    def setSetOfMagImages(self, setOfMagImages):
-        self._setOfMagImages.set(setOfMagImages)
-
-    def getSetOfMagImages(self):
-        self._setOfMagImages.get()
+    def __init__(self,  **kwargs):
+        Atlas.__init__(self,  **kwargs)
+    #     self._setOfMagImages = SetOfLowMagImages()
+    #
+    # # setOfMagImages
+    # def setSetOfMagImages(self, setOfMagImages):
+    #     self._setOfMagImages.set(setOfMagImages)
+    #
+    # def getSetOfMagImages(self):
+    #     self._setOfMagImages.get()
 
 class AtlasMed(Atlas):
-    def __init__(self):
-        Atlas.__init__(self)
+    def __init__(self,  **kwargs):
+        Atlas.__init__(self,  **kwargs)
         self._atlasLowID = Integer()
-        self._setOfMagImages = SetOfMedMagImages()
-
-    # setOfMagImages
-    def setSetOfMagImages(self, setOfMagImages):
-        self._setOfMagImages.set(setOfMagImages)
-
-    def getSetOfMagImages(self):
-        self._setOfMagImages.get()
+    #     self._setOfMagImages = SetOfMedMagImages()
+    #
+    # # setOfMagImages
+    # def setSetOfMagImages(self, setOfMagImages):
+    #     self._setOfMagImages.set(setOfMagImages)
+    #
+    # def getSetOfMagImages(self):
+    #     self._setOfMagImages.get()
 
 
 
@@ -181,6 +181,8 @@ class AtlasImage(Image):
         self._AlignedPieceCoords = CsvList()
         self._XedgeDxy = CsvList()
         self._YedgeDxy = CsvList()
+
+
 
 
     #imageName
@@ -435,8 +437,9 @@ class AtlasMedImage(AtlasImage):
 #-------SETS------------
 class SetOfMagImages(EMSet):
     ITEM_TYPE = AtlasImage
-    def __init__(self):
-        EMSet.__init__(self)
+    def __init__(self,  **kwargs):
+        EMSet.__init__(self,  **kwargs)
+        self._filename = String()
         self._atlasLowID = Integer()
         self._magnification = Float()
         self._voltage = Float()
@@ -503,8 +506,8 @@ class SetOfMagImages(EMSet):
     #     EMSet.append(self, image)
 
 class SetOfLowMagImages(SetOfMagImages):
-    def __init__(self):
-        SetOfMagImages.__init__(self)
+    def __init__(self,  **kwargs):
+        SetOfMagImages.__init__(self,  **kwargs)
         self._atlasLowID = Integer()
 
     #atlasLowID
@@ -515,8 +518,8 @@ class SetOfLowMagImages(SetOfMagImages):
         self._atlasLowID.get()
 
 class SetOfMedMagImages(SetOfMagImages):
-    def __init__(self):
-        SetOfMagImages.__init__(self)
+    def __init__(self,  **kwargs):
+        SetOfMagImages.__init__(self,  **kwargs)
         self._atlasMedID = Integer()
 
     # atlasLowID

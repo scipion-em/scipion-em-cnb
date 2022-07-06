@@ -88,6 +88,7 @@ class ProtImportAtlas(ProtImport):
 
     def createOutputStep(self):
         atlasLow = AtlasLow()
+        atlasLow.setObjId(1)
         atlasLow.setFileName(self.mrc_file.get())
         atlasLow.setVoltage(self.headerDict['Voltage'])
         atlasLow.setPixelSpacing(self.headerDict['PixelSpacing'])
@@ -99,7 +100,10 @@ class ProtImportAtlas(ProtImport):
         atlasLow.setBinning(self.zvalueList[0]['Binning'])
 
         self.info('self._getPath(): {}'.format(self._getPath()))
-        setOflmi = SetOfLowMagImages.create(self._getPath())
+
+        setOflmi = SetOfLowMagImages.create(outputPath=self._getPath())
+        setOflmi.setAtlasLowID(atlasLow.getObjId())
+        self.info('atlasLow.getObjId(): {}'.format(atlasLow.getObjId()))
         #setOflmi.__str__()
 
         # setOflmi.setVoltage(self.headerDict['Voltage'])
@@ -114,6 +118,7 @@ class ProtImportAtlas(ProtImport):
         for dict in self.zvalueList:
             lmi = AtlasLowImage()
 
+            lmi.setAtlasLowID(atlasLow.getObjId())
             lmi.setPieceCoordinates(dict['PieceCoordinates'])
             lmi.setMinMaxMean(dict['MinMaxMean'])
             lmi.setTiltAngle(dict['TiltAngle'])
@@ -147,11 +152,11 @@ class ProtImportAtlas(ProtImport):
             setOflmi.append(lmi)
 
 
-        atlasLow.setSetOfMagImages(setOflmi)
+        #atlasLow.setSetOfMagImages(setOflmi)
         self.info('Output: {}'.format(atlasLow.getMagnification()))
         self.debug('Solo si esta activado modo debug')
-        #self._defineOutputs(atlas=atlas, )
-        self.outputsToDefine = {'atlas': atlasLow}
+        #self._defineOutputs(atlasLow=atlasLow)
+        self.outputsToDefine = {'atlas': atlasLow, 'setOflmi': setOflmi}
         self._defineOutputs(**self.outputsToDefine)
 
 
