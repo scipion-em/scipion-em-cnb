@@ -28,20 +28,24 @@
 from pwem.objects import EMObject, Image, EMSet
 from pyworkflow.object import (Float, String, List, Integer, CsvList)
 
-class AtlasLow(EMObject):
+
+
+#-------ATLAS------------
+class Atlas(EMObject):
     """Atlas low magnification information"""
     #TO DO create viewers as viewer:tomograms.py scipion-em-tomo
-    def __init__(self, **kwargs):
-        EMObject.__init__(self, **kwargs)
+    def __init__(self):
+        EMObject.__init__(self)
         self._filename = String()
         self._mdoc = String()
-        self._magnification = Float(kwargs.get('magnification', None))
-        self._voltage = Float(kwargs.get('voltage', None))
-        self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
-        self._ImageFile = String(kwargs.get('ImageFile', None))
-        self._ImageSize = CsvList(kwargs.get('ImageSize', None))
-        self._Montage = Integer(kwargs.get('Montage', None))
-        self._DataMode = Integer(kwargs.get('DataMode', None))
+        self._magnification = Float()
+        self._voltage = Float()
+        self._PixelSpacing = Float()
+        self._ImageFile = String()
+        self._ImageSize = CsvList()
+        self._Montage = Integer()
+        self._DataMode = Integer()
+
 
 
     def setFileName(self, filename):
@@ -111,130 +115,73 @@ class AtlasLow(EMObject):
     def getBinning(self):
         return self._Binning.get()
 
+class AtlasLow(Atlas):
+    def __init__(self):
+        Atlas.__init__(self)
+        self._setOfMagImages = SetOfLowMagImages()
 
-class AtlasMedium(EMObject):
-    """Atlas medium magnification information"""
+    # setOfMagImages
+    def setSetOfMagImages(self, setOfMagImages):
+        self._setOfMagImages.set(setOfMagImages)
 
-    def __init__(self, **kwargs):
-        EMObject.__init__(self, **kwargs)
-        self._filename = String()
-        self._mdoc = String()
-        self._magnification = Float(kwargs.get('magnification', None))
-        # Microscope voltage in kV
-        self._voltage = Float(kwargs.get('voltage', None))
-        self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
-        self._ImageFile = Float(kwargs.get('ImageFile', None))
-        self._ImageSize = Float(kwargs.get('ImageSize', None))
-        self._Montage = Float(kwargs.get('Montage', None))
-        self._DataMode = Float(kwargs.get('DataMode', None))
+    def getSetOfMagImages(self):
+        self._setOfMagImages.get()
 
+class AtlasMed(Atlas):
+    def __init__(self):
+        Atlas.__init__(self)
+        self._atlasLowID = Integer()
+        self._setOfMagImages = SetOfMedMagImages()
 
-    def setFileName(self, filename):
-        """ Use the _objValue attribute to store filename. """
-        self._filename.set(filename)
+    # setOfMagImages
+    def setSetOfMagImages(self, setOfMagImages):
+        self._setOfMagImages.set(setOfMagImages)
 
-    def setmDoc(self, filename):
-        """ Use the _objValue attribute to store filename. """
-        self._mdoc.set(filename)
-
-    def setMagnification(self, _magnification):
-        self._magnification = _magnification
-
-    def setVoltage(self, _voltage):
-        self._voltage = _voltage
-
-    def setPixelSpacing(self, _PixelSpacing):
-        self._PixelSpacing = _PixelSpacing
-
-    def setImageFile(self, _ImageFile):
-        self._ImageFile = _ImageFile
-
-    def setImageSize(self, _ImageSize):
-        self._ImageSize = _ImageSize
-
-    def setMontage(self, _Montage):
-        self._Montage = _Montage
-
-    def setDataMode(self, _DataMode):
-        self._DataMode = _DataMode
-
-    def setBinning(self, _Binning):
-        self._Binning = _Binning
+    def getSetOfMagImages(self):
+        self._setOfMagImages.get()
 
 
 
-
-    def getFileName(self):
-        """ Use the _objValue attribute to store filename. """
-        return self._filename.get()
-
-    def getmDoc(self):
-        """ Use the _objValue attribute to store filename. """
-        return self._mdoc.get()
-
-    def getVoltage(self):
-        return self._voltage.get()
-
-    def getVMagnification(self):
-        return self._magnification.get()
-
-    def getPixelSpacing(self):
-        return self._PixelSpacing.get()
-
-    def getImageFile(self):
-        return self._ImageFile.get()
-
-    def getImageSize(self):
-        return self._ImageSize.get()
-
-    def getMontage(self):
-        return self._Montage.get()
-
-    def getDataMode(self):
-        return self._DataMode.get()
-
-    def getBinning(self):
-        return self._Binning.get()
-
-
-class LowMagImage(Image):
+#-------IMAGES------------
+class AtlasImage(Image):
     """ Represents an image (slice) of an Atlas object """
 
-    def __init__(self, location=None, **kwargs):
-        EMObject.__init__(self, location, **kwargs)
+    def __init__(self, location=None):
+        EMObject.__init__(self, location)
         self._imageName = String()
         # definition CsvList parameters : https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
         self._PieceCoordinates = CsvList()
         self._MinMaxMean = CsvList()
-        self._TiltAngle = Float(kwargs.get('TiltAngle', None))
-        self._StagePosition = CsvList(kwargs.get('StagePosition', None))
-        self._StageZ = Float(kwargs.get('StageZ', None))
-        self._Magnification = Integer(kwargs.get('Magnification', None))
-        self._Intensity = Float(kwargs.get('Intensity', None))
-        self._ExposureDose = Float(kwargs.get('ExposureDose', None))
-        self._DoseRate = Float(kwargs.get('DoseRate', None))
-        self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
-        self._SpotSize = Float(kwargs.get('SpotSize', None))
-        self._Defocus = Float(kwargs.get('Defocus', None))
+        self._TiltAngle = Float()
+        self._StagePosition = CsvList()
+        self._StageZ = Float()
+        self._Magnification = Integer()
+        self._Intensity = Float()
+        self._ExposureDose = Float()
+        self._DoseRate = Float()
+        self._PixelSpacing = Float()
+        self._SpotSize = Float()
+        self._Defocus = Float()
         self._ImageShift = CsvList()
-        self._RotationAngle = Float(kwargs.get('RotationAngle', None))
-        self._ExposureTime = Float(kwargs.get('ExposureTime', None))
-        self._Binning = Float(kwargs.get('Binning', None))
-        self._CameraIndex = Integer(kwargs.get('CameraIndex', None))
-        self._DividedBy2 = Integer(kwargs.get('DividedBy2', None))
-        self._OperatingMode = Integer(kwargs.get('OperatingMode', None))
-        self._UsingCDS = Integer(kwargs.get('UsingCDS', None))
-        self._MagIndex = Integer(kwargs.get('MagIndex', None))
-        self._LowDoseConSet = Float(kwargs.get('LowDoseConSet', None))
-        self._CountsPerElectron = Integer(kwargs.get('CountsPerElectron', None))
-        self._TargetDefocus = Float(kwargs.get('TargetDefocus', None))
-        self._DateTime = String(kwargs.get('DateTime', None))
+        self._RotationAngle = Float()
+        self._ExposureTime = Float()
+        self._Binning = Float()
+        self._CameraIndex = Integer()
+        self._DividedBy2 = Integer()
+        self._OperatingMode = Integer()
+        self._UsingCDS = Integer()
+        self._MagIndex = Integer()
+        self._LowDoseConSet = Float()
+        self._CountsPerElectron = Integer()
+        self._TargetDefocus = Float()
+        self._DateTime = String()
         self._FilterSlitAndLoss = CsvList()
         self._UncroppedSize = CsvList()
-        self._RotationAndFlip = Integer(kwargs.get('RotationAndFlip', None))
+        self._RotationAndFlip = Integer()
         self._AlignedPieceCoords = CsvList()
         self._XedgeDxy = CsvList()
         self._YedgeDxy = CsvList()
+
 
     #imageName
     def setImageName(self, imageName):
@@ -460,18 +407,45 @@ class LowMagImage(Image):
     def getYedgeDxy(self):
         self._YedgeDxy.get()
 
+class AtlasLowImage(AtlasImage):
+    def __init__(self):
+        AtlasImage.__init__(self)
+        self._atlasLowID = Integer()
 
-class SetOfLowMagImages(EMSet):
-    ITEM_TYPE = LowMagImage
-    def __init__(self, **kwargs):
-        EMSet.__init__(self, **kwargs)
-        self._magnification = Float(kwargs.get('magnification', None))
-        self._voltage = Float(kwargs.get('voltage', None))
-        self._PixelSpacing = Float(kwargs.get('PixelSpacing', None))
-        self._ImageFile = String(kwargs.get('ImageFile', None))
-        self._ImageSize = CsvList(kwargs.get('ImageSize', None))
-        self._Montage = Integer(kwargs.get('Montage', None))
-        self._DataMode = Integer(kwargs.get('DataMode', None))
+    #atlasLowID
+    def setAtlasLowID(self, atlasLowID):
+        self._atlasLowID.set(atlasLowID)
+
+    def getAtlasLowID(self):
+        self._atlasLowID.get()
+
+class AtlasMedImage(AtlasImage):
+    def __init__(self):
+        AtlasImage.__init__(self)
+        self._atlasMedID = Integer()
+
+    #atlasLowID
+    def setAtlasMedID(self, atlasMedID):
+        self._atlasMedID.set(atlasMedID)
+
+    def getAtlasMedID(self):
+        self._atlasMedID.get()
+
+
+#-------SETS------------
+class SetOfMagImages(EMSet):
+    ITEM_TYPE = AtlasImage
+    def __init__(self):
+        EMSet.__init__(self)
+        self._atlasLowID = Integer()
+        self._magnification = Float()
+        self._voltage = Float()
+        self._PixelSpacing = Float()
+        self._ImageFile = String()
+        self._ImageSize = CsvList()
+        self._Montage = Integer()
+        self._DataMode = Integer()
+
 
 
     def setMagnification(self, _magnification):
@@ -528,7 +502,32 @@ class SetOfLowMagImages(EMSet):
     #     """ Add a image to the set. """
     #     EMSet.append(self, image)
 
+class SetOfLowMagImages(SetOfMagImages):
+    def __init__(self):
+        SetOfMagImages.__init__(self)
+        self._atlasLowID = Integer()
 
+    #atlasLowID
+    def setAtlasLowID(self, atlasLowID):
+        self._atlasLowID.set(atlasLowID)
+
+    def getAtlasLowID(self):
+        self._atlasLowID.get()
+
+class SetOfMedMagImages(SetOfMagImages):
+    def __init__(self):
+        SetOfMagImages.__init__(self)
+        self._atlasMedID = Integer()
+
+    # atlasLowID
+    def setAtlasLowID(self, atlasMedID):
+        self._atlasMedID.set(atlasMedID)
+
+    def getAtlasLowID(self):
+        self._atlasMedID.get()
+
+
+#-------MDOC------------
 
 class MDoc:
     """class define mdoc files from SerialEM

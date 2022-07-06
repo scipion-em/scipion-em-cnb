@@ -25,6 +25,7 @@
 # *  e-mail address 'scipion@cnb.csic.es'
 # *
 # **************************************************************************
+import shutil
 
 from ..objects import AtlasLow
 import os
@@ -81,34 +82,37 @@ class ProtImportAtlas(ProtImport):
             self.zvalueList.append(dic)
 
         self.createImagesSlices()
+        shutil.copyfile(self.mdoc_file, self._getExtraPath(os.path.basename(self.mdoc_file)))
+
 
 
     def createOutputStep(self):
-        atlas = AtlasLow()
-        atlas.setFileName(self.mrc_file.get())
-        atlas.setVoltage(self.headerDict['Voltage'])
-        atlas.setPixelSpacing(self.headerDict['PixelSpacing'])
-        atlas.setImageFile(self.headerDict['ImageFile'])
-        atlas.setImageSize(self.headerDict['ImageSize'])
-        atlas.setMontage(self.headerDict['Montage'])
-        atlas.setDataMode(self.headerDict['DataMode'])
-        atlas.setMagnification(self.zvalueList[0]['Magnification'])
-        atlas.setBinning(self.zvalueList[0]['Binning'])
+        atlasLow = AtlasLow()
+        atlasLow.setFileName(self.mrc_file.get())
+        atlasLow.setVoltage(self.headerDict['Voltage'])
+        atlasLow.setPixelSpacing(self.headerDict['PixelSpacing'])
+        atlasLow.setImageFile(self.headerDict['ImageFile'])
+        atlasLow.setImageSize(self.headerDict['ImageSize'])
+        atlasLow.setMontage(self.headerDict['Montage'])
+        atlasLow.setDataMode(self.headerDict['DataMode'])
+        atlasLow.setMagnification(self.zvalueList[0]['Magnification'])
+        atlasLow.setBinning(self.zvalueList[0]['Binning'])
 
+        self.info('self._getPath(): {}'.format(self._getPath()))
         setOflmi = SetOfLowMagImages.create(self._getPath())
         #setOflmi.__str__()
 
-        setOflmi.setVoltage(self.headerDict['Voltage'])
-        setOflmi.setPixelSpacing(self.headerDict['PixelSpacing'])
-        setOflmi.setImageFile(self.headerDict['ImageFile'])
-        setOflmi.setImageSize(self.headerDict['ImageSize'])
-        setOflmi.setMontage(self.headerDict['Montage'])
-        setOflmi.setDataMode(self.headerDict['DataMode'])
-        setOflmi.setMagnification(self.zvalueList[0]['Magnification'])
-        setOflmi.setBinning(self.zvalueList[0]['Binning'])
+        # setOflmi.setVoltage(self.headerDict['Voltage'])
+        # setOflmi.setPixelSpacing(self.headerDict['PixelSpacing'])
+        # setOflmi.setImageFile(self.headerDict['ImageFile'])
+        # setOflmi.setImageSize(self.headerDict['ImageSize'])
+        # setOflmi.setMontage(self.headerDict['Montage'])
+        # setOflmi.setDataMode(self.headerDict['DataMode'])
+        # setOflmi.setMagnification(self.zvalueList[0]['Magnification'])
+        # setOflmi.setBinning(self.zvalueList[0]['Binning'])
 
         for dict in self.zvalueList:
-            lmi = LowMagImage()
+            lmi = AtlasLowImage()
 
             lmi.setPieceCoordinates(dict['PieceCoordinates'])
             lmi.setMinMaxMean(dict['MinMaxMean'])
@@ -142,10 +146,12 @@ class ProtImportAtlas(ProtImport):
 
             setOflmi.append(lmi)
 
-        self.info('Output: {}'.format(atlas.getMagnification()))
+
+        atlasLow.setSetOfMagImages(setOflmi)
+        self.info('Output: {}'.format(atlasLow.getMagnification()))
         self.debug('Solo si esta activado modo debug')
         #self._defineOutputs(atlas=atlas, )
-        self.outputsToDefine = {'atlas': atlas, 'setof_lmi': setOflmi}
+        self.outputsToDefine = {'atlas': atlasLow}
         self._defineOutputs(**self.outputsToDefine)
 
 
@@ -165,8 +171,9 @@ class ProtImportAtlas(ProtImport):
                 slice_image = ImageHandler().createImage()
                 sliceMatrix = images[d, :, :]
                 slice_image.setData(sliceMatrix)
+                numberDigit = str(d).rjust(3, '0')
                 slice_image.write(os.path.join(self._getExtraPath(),
-                                               '{}_slice.mrc'.format(d)))
+                                               '{}_slice.mrc'.format(numberDigit)))
 
 
 
