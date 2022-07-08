@@ -78,7 +78,6 @@ class ProtImportAtlas(ProtImport):
             dic = {}
             for k, v in l.items():
                 dic[k] = self.getStringType(v)
-                #print(k, v, dic[k])
             self.zvalueList.append(dic)
 
         self.createImagesSlices()
@@ -99,12 +98,9 @@ class ProtImportAtlas(ProtImport):
         atlasLow.setMagnification(self.zvalueList[0]['Magnification'])
         atlasLow.setBinning(self.zvalueList[0]['Binning'])
 
-        self.info('self._getPath(): {}'.format(self._getPath()))
-
         setOflmi = SetOfLowMagImages.create(outputPath=self._getPath())
         setOflmi.setAtlasLowID(atlasLow.getObjId())
         self.info('atlasLow.getObjId(): {}'.format(atlasLow.getObjId()))
-        #setOflmi.__str__()
 
         # setOflmi.setVoltage(self.headerDict['Voltage'])
         # setOflmi.setPixelSpacing(self.headerDict['PixelSpacing'])
@@ -115,14 +111,18 @@ class ProtImportAtlas(ProtImport):
         # setOflmi.setMagnification(self.zvalueList[0]['Magnification'])
         # setOflmi.setBinning(self.zvalueList[0]['Binning'])
 
+
         for dict in self.zvalueList:
             lmi = AtlasLowImage()
-
+            lmi.setzValue(dict['zvalue'])
+            lmi.setFileName(dict['imageName'])
             lmi.setAtlasLowID(atlasLow.getObjId())
             lmi.setPieceCoordinates(dict['PieceCoordinates'])
             lmi.setMinMaxMean(dict['MinMaxMean'])
             lmi.setTiltAngle(dict['TiltAngle'])
+            lmi.setStagePosition(dict['StagePosition'])
             lmi.setStageZ(dict['StageZ'])
+            lmi.setMagnification(dict['Magnification'])
             lmi.setIntensity(dict['Intensity'])
             lmi.setExposureDose(dict['ExposureDose'])
             lmi.setDoseRate(dict['DoseRate'])
@@ -146,16 +146,13 @@ class ProtImportAtlas(ProtImport):
             lmi.setUncroppedSize(dict['UncroppedSize'])
             lmi.setRotationAndFlip(dict['RotationAndFlip'])
             lmi.setAlignedPieceCoords(dict['AlignedPieceCoords'])
-            #lmi.setXedgeDxy(dict['XedgeDxy'])
-            #lmi.setYedgeDxy(dict['YedgeDxy'])
-
+            lmi.setXedgeDxy(dict['XedgeDxy'])
+            lmi.setYedgeDxy(dict['YedgeDxy'])
             setOflmi.append(lmi)
 
 
         #atlasLow.setSetOfMagImages(setOflmi)
-        self.info('Output: {}'.format(atlasLow.getMagnification()))
         self.debug('Solo si esta activado modo debug')
-        #self._defineOutputs(atlasLow=atlasLow)
         self.outputsToDefine = {'atlas': atlasLow, 'setOflmi': setOflmi}
         self._defineOutputs(**self.outputsToDefine)
 
@@ -176,21 +173,22 @@ class ProtImportAtlas(ProtImport):
                 slice_image = ImageHandler().createImage()
                 sliceMatrix = images[d, :, :]
                 slice_image.setData(sliceMatrix)
-                numberDigit = str(d).rjust(3, '0')
-                slice_image.write(os.path.join(self._getExtraPath(),
-                                               '{}_slice.mrc'.format(numberDigit)))
-
+                numberDigit = str(d+1).rjust(3, '0')
+                strName = '{}_slice.mrc'.format(numberDigit)
+                strPath = os.path.join(self._getExtraPath(), strName)
+                slice_image.write(os.path.join(self._getExtraPath(), strName))
+                self.zvalueList[d]['imageName'] = strPath
 
 
 
     #UTILS
     def getStringType(self, string):
-        if string == 'None':
+        if string == None or 'None':
             return string
         try:#date
             date = datetime.strptime(string, '%d-%b-%y %H:%M:%S')
             return date
-        except ValueError:
+        except ValueError or TypeError:
             pass
         if string.__contains__(' '): #list
             str2Csv = string.replace(' ', ',')

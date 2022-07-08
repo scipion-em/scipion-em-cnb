@@ -28,18 +28,25 @@
 
 
 from pwem.viewers.viewers_data import DataViewer
-from pwem import emlib
 from ..objects.data import *
-import pyworkflow.viewer as pwviewer
 from pwem.viewers import DataView, ObjectView
+from pwem.viewers.showj import ORDER, VISIBLE, MODE, RENDER, MODE_MD
 
 class DataViewer_cnb(DataViewer):
-    _targets = [Atlas_Low, Atlas_Medium]
-
+    _targets = [SetOfLowMagImages]
 
     def _visualize(self, obj, **kwargs):
-        print(obj.getFileName())
-        #self._views.append(ObjectView(self._project, obj.strId(), obj.getFileName()))
-        self._views.append(DataView(obj.getFileName())) #no muestra la tabla
-
+        self._views.append(DataView(obj.getFileName()))
         return self._views
+
+    # def _visualize(self, obj, **kwargs):
+    #     fn = obj.getFileName()
+    #     # Enabled for the future has to be available
+    #     labels = ('_PieceCoordinates _MinMaxMean _TiltAngle _StagePosition _StageZl ')
+    #     renderLabels = '_filename '
+    #     moviesView = self._addObjView(obj, fn, {ORDER: labels,
+    #                                             VISIBLE: labels,
+    #                                             MODE: MODE_MD,
+    #                                             RENDER: renderLabels})
+    #     return moviesView
+

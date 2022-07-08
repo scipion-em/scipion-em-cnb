@@ -28,8 +28,6 @@
 from pwem.objects import EMObject, Image, EMSet
 from pyworkflow.object import (Float, String, List, Integer, CsvList)
 
-
-
 #-------ATLAS------------
 class Atlas(EMObject):
     """Atlas low magnification information"""
@@ -50,7 +48,6 @@ class Atlas(EMObject):
 
     def setFileName(self, filename):
         """ Use the _objValue attribute to store filename. """
-        print("TYPE:" + str(type(filename)))
         self._filename.set(filename)
 
     def setmDoc(self, filename):
@@ -146,10 +143,10 @@ class AtlasMed(Atlas):
 class AtlasImage(Image):
     """ Represents an image (slice) of an Atlas object """
 
-    def __init__(self, location=None):
-        EMObject.__init__(self, location)
-        self._imageName = String()
+    def __init__(self, location=None, **kwargs):
+        Image.__init__(self, location=None, **kwargs)
         # definition CsvList parameters : https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
+        self._zValue = Integer()
         self._PieceCoordinates = CsvList()
         self._MinMaxMean = CsvList()
         self._TiltAngle = Float()
@@ -185,19 +182,27 @@ class AtlasImage(Image):
 
 
 
-    #imageName
-    def setImageName(self, imageName):
-        self._imageName.set(imageName)
-
-    def getImageName(self):
-        self._imageName.get()
-        
+    # #imageName
+    # def setImageName(self, imageName):
+    #     self._imageName.set(imageName)
+    #
+    # def getImageName(self):
+    #     self._imageName.get()
+    #
     #PieceCoordinates
     def setPieceCoordinates(self, PieceCoordinates):
         self._PieceCoordinates.set(PieceCoordinates)
 
     def getPieceCoordinates(self):
         self._PieceCoordinates.get()
+
+    #zValue
+    def setzValue(self, zValue):
+        self._zValue.set(zValue)
+
+    def getzValue(self):
+        self._zValue.get()
+
 
     #MinMaxMean
     def setMinMaxMean(self, MinMaxMean):
@@ -560,6 +565,41 @@ class MDoc:
     def __init__(self, fileName):
         self._mdocFileName = str(fileName)
 
+    def createDictTem(self):
+            return {
+                'zvalue': None,
+                'PieceCoordinates': None,
+                'MinMaxMean': None,
+                'TiltAngle': None,
+                'StagePosition': None,
+                'StageZ': None,
+                'Magnification': None,
+                'Intensity': None,
+                'ExposureDose': None,
+                'DoseRate': None,
+                'PixelSpacing': None,
+                'SpotSize': None,
+                'Defocus': None,
+                'ImageShift': None,
+                'RotationAngle': None,
+                'ExposureTime': None,
+                'Binning': None,
+                'CameraIndex': None,
+                'DividedBy2': None,
+                'OperatingMode': None,
+                'UsingCDS': None,
+                'MagIndex': None,
+                'LowDoseConSet': None,
+                'CountsPerElectron': None,
+                'TargetDefocus': None,
+                'DateTime': None,
+                'FilterSlitAndLoss': None,
+                'UncroppedSize': None,
+                'RotationAndFlip': None,
+                'AlignedPieceCoords': None,
+                'XedgeDxy': None,
+                'YedgeDxy': None}
+
     def parseMdoc(self):
         """
         Parse the mdoc file and return a list with a dict key=value for each
@@ -573,25 +613,32 @@ class MDoc:
         zvalueList = []  # list of dictionaries with
         with open(self._mdocFileName) as f:
             for line in f:
-                #print(line)
-                if line.startswith('[ZValue'):  # each tilt movie
+                if line.startswith('[T'):  # auxiliary global information
+                    strLine = line.strip().replace(' ', '').\
+                                           replace(',', '').lower()
+                    headerDict['auxiliary'] = strLine
+                elif line.startswith('[ZValue'):  # each tilt movie
                     # We have found a new z value
                     headerParsed = True
                     zvalue = int(line.split(']')[0].split('=')[1])
                     if zvalue != len(zvalueList):
                         raise Exception("Unexpected ZValue = %d" % zvalue)
-                    zvalueDict = {}
+                    zvalueDict = self.createDictTem()
+                    zvalueDict['zvalue'] = str(zvalue)
                     zvalueList.append(zvalueDict)
-                elif line.startswith('[T'):  # auxiliary global information
-                    strLine = line.strip().replace(' ', '').\
-                                           replace(',', '').lower()
-                    headerDict['auxiliary'] = strLine
+
                 elif line.strip():  # global variables no in [T sections]
                     key, value = line.split('=')
                     if not headerParsed:
                         headerDict[key.strip()] = value.strip()
                     if zvalueList:
                         zvalueDict[key.strip()] = value.strip()
+                        #print('zvalue: {} key.strip(): {}'.format(zvalue, key.strip()))
+                        #print('zvalueDict[key.strip()] {}'.format(zvalueDict[key.strip()]))
+
+        # print(len(zvalueList))
+        # print(zvalueDict)
 
         return headerDict, zvalueList
+
 
