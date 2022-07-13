@@ -115,27 +115,18 @@ class Atlas(EMObject):
 class AtlasLow(Atlas):
     def __init__(self,  **kwargs):
         Atlas.__init__(self,  **kwargs)
-    #     self._setOfMagImages = SetOfLowMagImages()
-    #
-    # # setOfMagImages
-    # def setSetOfMagImages(self, setOfMagImages):
-    #     self._setOfMagImages.set(setOfMagImages)
-    #
-    # def getSetOfMagImages(self):
-    #     self._setOfMagImages.get()
 
 class AtlasMed(Atlas):
     def __init__(self,  **kwargs):
         Atlas.__init__(self,  **kwargs)
         self._atlasLowID = Integer()
-    #     self._setOfMagImages = SetOfMedMagImages()
-    #
-    # # setOfMagImages
-    # def setSetOfMagImages(self, setOfMagImages):
-    #     self._setOfMagImages.set(setOfMagImages)
-    #
-    # def getSetOfMagImages(self):
-    #     self._setOfMagImages.get()
+
+    #atlasMedID
+    def setAtlasLowID(self, atlasLowID):
+        self._atlasLowID.set(atlasLowID)
+
+    def getAtlasLowID(self):
+        self._atlasLowID.get()
 
 
 
@@ -178,17 +169,17 @@ class AtlasImage(Image):
         self._AlignedPieceCoords = CsvList()
         self._XedgeDxy = CsvList()
         self._YedgeDxy = CsvList()
+        self._atlasID = Integer()
 
 
+    #atlasID
+    def setAtlasID(self, atlasID):
+        self._atlasID.set(atlasID)
+
+    def getAtlasID(self):
+        self._atlasID.get()
 
 
-    # #imageName
-    # def setImageName(self, imageName):
-    #     self._imageName.set(imageName)
-    #
-    # def getImageName(self):
-    #     self._imageName.get()
-    #
     #PieceCoordinates
     def setPieceCoordinates(self, PieceCoordinates):
         self._PieceCoordinates.set(PieceCoordinates)
@@ -417,26 +408,11 @@ class AtlasImage(Image):
 class AtlasLowImage(AtlasImage):
     def __init__(self):
         AtlasImage.__init__(self)
-        self._atlasLowID = Integer()
 
-    #atlasLowID
-    def setAtlasLowID(self, atlasLowID):
-        self._atlasLowID.set(atlasLowID)
-
-    def getAtlasLowID(self):
-        self._atlasLowID.get()
 
 class AtlasMedImage(AtlasImage):
     def __init__(self):
         AtlasImage.__init__(self)
-        self._atlasMedID = Integer()
-
-    #atlasLowID
-    def setAtlasMedID(self, atlasMedID):
-        self._atlasMedID.set(atlasMedID)
-
-    def getAtlasMedID(self):
-        self._atlasMedID.get()
 
 
 #-------SETS------------
@@ -445,7 +421,6 @@ class SetOfMagImages(EMSet):
     def __init__(self,  **kwargs):
         EMSet.__init__(self,  **kwargs)
         self._filename = String()
-        self._atlasLowID = Integer()
         self._magnification = Float()
         self._voltage = Float()
         self._PixelSpacing = Float()
@@ -527,11 +502,11 @@ class SetOfMedMagImages(SetOfMagImages):
         SetOfMagImages.__init__(self,  **kwargs)
         self._atlasMedID = Integer()
 
-    # atlasLowID
-    def setAtlasLowID(self, atlasMedID):
+    # atlasMedID
+    def setAtlasMedID(self, atlasMedID):
         self._atlasMedID.set(atlasMedID)
 
-    def getAtlasLowID(self):
+    def getAtlasMedID(self):
         self._atlasMedID.get()
 
 
