@@ -39,6 +39,88 @@ class cnbReportParameters(EMProtocol):
     """
     This protocol will store the ctf phaseshift in a determined file to be parse by SerialEM
     """
+    """
+        Report Parameters (cnbReportParameters) — User Manual
+
+            Overview
+
+            The Report Parameters protocol extracts selected metadata
+            and acquisition-related parameters from a Scipion EMSet and
+            continuously writes them into a text file. Its main purpose
+            is to generate lightweight parameter reports that can be
+            monitored externally or parsed by third-party software such
+            as SerialEM during cryo-EM acquisition or processing
+            workflows.
+
+            The protocol is designed for streaming environments where
+            new objects are progressively added to the input dataset.
+            As new entries appear, the protocol automatically detects
+            them and updates the output file with the selected
+            parameters in real time.
+
+            Inputs and General Workflow
+
+            The protocol requires an input EMSet together with the type
+            of parameters that should be extracted from the objects and
+            the parent dataset. Users can define the destination folder,
+            output filename, number of stored parameter lines, and
+            whether additional information such as headers or timestamps
+            should be included.
+
+            During execution, the protocol monitors the input dataset
+            and identifies newly added objects that have not yet been
+            reported. The selected object attributes and dataset
+            attributes are then collected and formatted into a text
+            representation suitable for external monitoring or automated
+            parsing.
+
+            Streaming Parameter Reporting
+
+            The protocol supports continuous streaming updates by
+            periodically checking whether new objects have been added
+            to the input set. Each new object generates a new parameter
+            entry in the output file, while previously processed objects
+            are tracked internally to avoid duplicated reporting.
+
+            Optionally, timestamps can be appended to each line in
+            order to record the exact moment when parameters were
+            written. This behavior is particularly useful for live
+            acquisition workflows, microscope monitoring, or automated
+            quality-control pipelines.
+
+            Outputs and Interpretation
+
+            The main output is a continuously updated text file
+            containing the selected parameters extracted from the
+            incoming dataset. Depending on the selected configuration,
+            the file may include parameter headers, acquisition times,
+            and a limited history of previously written entries.
+
+            The generated file can be directly consumed by external
+            software tools, monitoring systems, or automated cryo-EM
+            acquisition environments requiring lightweight parameter
+            exchange.
+
+            Practical Considerations
+
+            The usefulness of the generated report strongly depends on
+            selecting meaningful parameters for the monitored workflow.
+            Since the protocol is intended for streaming scenarios,
+            stable input datasets and consistent metadata definitions
+            improve reliability and readability of the generated files.
+
+            Limiting the number of stored lines may help maintain
+            compact real-time reports during long acquisition sessions.
+
+            Final Perspective
+
+            cnbReportParameters provides a simple framework for real-time
+            extraction and reporting of cryo-EM workflow parameters.
+            By supporting streaming updates, customizable metadata
+            selection, and lightweight text-based outputs, the protocol
+            facilitates integration between Scipion and external
+            monitoring or acquisition systems.
+        """
     _label = 'Report parameters'
 
     def __init__(self, **kwargs):
